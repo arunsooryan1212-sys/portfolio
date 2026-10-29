@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbarbrand" href="#home">Arun</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto gap-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  
+    <section id="home" class="hero">
+        <div class="commonbody">
+            <p class="herosmall">Hello, I'm</p>
+            <h1 class="herotitle">Arun Kumar V</h1>
+            <h2 class="herorole">Computer Engineering Graduate & Web Developer</h2>
+            <p class="herotext">I build clean, responsive websites using HTML, CSS, Bootstrap and Tailwind.</p>
+            <div class="herobuttons">
+                <a href="#projects" class="btnmain">View My Work</a>
+                <a href="#contact" class="btnoutlinemain">Contact Me</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="commonbody">
+            <h2 class="sectiontitle">About Me</h2>
+            <p class="abouttext">
+                I am a fresh Computer Engineering diploma graduate (2026 pass-out) with a strong interest in front-end web development. I enjoy turning ideas into simple, responsive and good-looking websites, and I'm eager to learn, grow and take on my first professional opportunity.
+            </p>
+
+            <div class="singlecard">
+                <div class="card info-card">
+                    <div class="cardbody">
+                        <h5 class="card-title">Education</h5>
+                        <p class="card-text"><strong>Diploma in Computer Engineering</strong></p>
+                        <p class="card-text">Government Polytechnic College, Cherthala</p>
+                        <p class="card-text">Pass-out: 2026 </p>
+                        <p class="card-text">CGPA: 7.8</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="skills" class="section section-alt">
+        <div class="commonbody">
+            <h2 class="sectiontitle">Skills</h2>
+            <div class="skillsgrid">
+                <div class="card skillcard">
+                    <div class="cardbody">
+                        <i class="fa-brands fa-html5"></i>
+                        <h6 class="card-title">HTML</h6>
+                    </div>
+                </div>
+                <div class="card skillcard">
+                    <div class="cardbody">
+                        <i class="fa-brands fa-css3-alt"></i>
+                        <h6 class="cardtitle">CSS</h6>
+                    </div>
+                </div>
+                <div class="card skillcard">
+                    <div class="cardbody">
+                        <i class="fa-brands fa-bootstrap"></i>
+                        <h6 class="cardtitle">Bootstrap</h6>
+                    </div>
+                </div>
+                <div class="card skillcard">
+                    <div class="card-body">
+                        <i class="fa-solid fa-wind"></i>
+                        <h6 class="cardtitle">Tailwind</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <div class="commonbody">
+            <h2 class="sectiontitle">Projects</h2>
+            <div class="singlecard">
+                <div class="card projectcard">
+                    <div class="cardbody">
+                        <h5 class="cardtitle">Evara Events Website</h5>
+                        <p class="cardtext">A responsive event management website with a home banner, services, gallery and contact sections, built using HTML, CSS and Bootstrap.</p>
+                        <div class="tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>Bootstrap</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact">
+        <div class="commonbody">
+            <h2 class="sectiontitle">Contact Me</h2>
+            <p class="contact-line"><i class="fa-solid fa-envelope"></i> arunsooryan1212@gmail.com</p>
+
+            <div class="socialicons">
+                <a class="smlinks" href="https://github.com/" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a class="smlinks" href="https://www.linkedin.com/" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a class="smlinks" href="https://www.instagram.com/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Arun Kumar V. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
