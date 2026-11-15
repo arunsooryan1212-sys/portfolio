@@ -1,213 +1,251 @@
-// ---------- Preloader (hides when page loads, with a safety fallback) ----------
 (function () {
-    const preloader = document.getElementById('preloader');
+    'use strict';
+
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = window.matchMedia('(hover: hover)').matches;
+
+    /* ---------- Prepare markup immediately ---------- */
+
+    // Split hero title into words for the mask reveal
+    $$('[data-split]').forEach(el => {
+        const words = el.textContent.trim().split(/\s+/);
+        el.setAttribute('aria-label', el.textContent.trim());
+        el.innerHTML = words
+            .map((w, i) => `<span class="w" aria-hidden="true"><span style="--i:${i}">${w}</span></span>`)
+            .join(' ');
+    });
+
+    // Stagger: children with data-anim get an incremental delay
+    $$('[data-stagger]').forEach(parent => {
+        const step = parseInt(parent.dataset.stagger, 10) || 100;
+        $$(':scope > [data-anim]', parent).forEach((child, i) => {
+            child.style.setProperty('--d', i * step + 'ms');
+        });
+    });
+
+    // Duplicate marquee content for a seamless loop
+    const track = $('#marqueeTrack');
+    if (track) track.innerHTML += track.innerHTML;
+
+    /* ---------- Preloader ---------- */
+    const preloader = $('#preloader');
+    let started = false;
+
     function hidePreloader() {
         if (preloader) preloader.classList.add('hide');
-    }
-    window.addEventListener('load', () => setTimeout(hidePreloader, 500));
-    setTimeout(hidePreloader, 3000); // fallback if a CDN loads slowly
-})();
-
-// ---------- Subtle particle background (muted, responsive) ----------
-(function () {
-    const canvas = document.getElementById('bgCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-
-    function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        const count = w < 768 ? 22 : Math.min(55, Math.floor((w * h) / 30000));
-        particles = Array.from({ length: count }, () => ({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            vx: (Math.random() - 0.5) * 0.25,
-            vy: (Math.random() - 0.5) * 0.25,
-            r: Math.random() * 1.2 + 0.5
-        }));
+        if (!started) { started = true; initScrollFX(); }
     }
 
-    window.addEventListener('resize', resize);
-    resize();
+    window.addEventListener('load', () => setTimeout(hidePreloader, 700));
+    setTimeout(hidePreloader, 3000); // fallback if a CDN is slow
 
-    function draw() {
-        ctx.clearRect(0, 0, w, h);
-        for (let i = 0; i < particles.length; i++) {
-            const p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            if (p.x < 0 || p.x > w) p.vx *= -1;
-            if (p.y < 0 || p.y > h) p.vy *= -1;
+    /* ---------- Counters & bars ---------- */
+    function runCounter(el) {
+        cancelAnimationFrame(el._raf);
+        const target = parseFloat(el.dataset.count);
+        const dec = parseInt(el.dataset.decimals || 0, 10);
+        const dur = reduce ? 0 : 1600;
+        const t0 = performance.now();
 
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(148, 163, 200, 0.45)';
-            ctx.fill();
+        function tick(now) {
+            const p = dur ? Math.min((now - t0) / dur, 1) : 1;
+            const e = 1 - Math.pow(1 - p, 3);
+            el.textContent = (target * e).toFixed(dec);
+            if (p < 1) el._raf = requestAnimationFrame(tick);
+        }
+        el._raf = requestAnimationFrame(tick);
+    }
 
-            for (let j = i + 1; j < particles.length; j++) {
-                const q = particles[j];
-                const d = Math.hypot(p.x - q.x, p.y - q.y);
-                if (d < 120) {
-                    ctx.strokeStyle = `rgba(108, 156, 240, ${0.12 * (1 - d / 120)})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(q.x, q.y);
-                    ctx.stroke();
-                }
+    function resetCounter(el) {
+        cancelAnimationFrame(el._raf);
+        el.textContent = (0).toFixed(parseInt(el.dataset.decimals || 0, 10));
+    }
+
+    /* ---------- Scroll-triggered animations (replay both directions) ---------- */
+    function enter(el) {
+        if (el.classList.contains('in-view')) return;
+        el.classList.add('in-view');
+
+        $$('.counter', el).forEach(runCounter);
+
+        const delay = parseInt(el.style.getPropertyValue('--d'), 10) || 0;
+        $$('.bar-fill', el).forEach(bar => {
+            bar.style.transitionDelay = delay + 300 + 'ms';
+            bar.style.width = bar.dataset.width + '%';
+        });
+    }
+
+    function leave(el) {
+        if (!el.classList.contains('in-view')) return;
+        el.classList.remove('in-view');
+
+        $$('.counter', el).forEach(resetCounter);
+        $$('.bar-fill', el).forEach(bar => {
+            bar.style.transitionDelay = '0ms';
+            bar.style.width = '0';
+        });
+    }
+
+    function initScrollFX() {
+        const targets = $$('[data-anim], [data-split], [data-watch]');
+
+        if (reduce) { targets.forEach(enter); }
+        else {
+            // Adds the animation when an element enters the screen
+            const inObs = new IntersectionObserver(entries => {
+                entries.forEach(e => { if (e.isIntersecting) enter(e.target); });
+            }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+
+            // Resets it only after the element is well outside the screen
+            // (the extra margin prevents flicker at the edges)
+            const outObs = new IntersectionObserver(entries => {
+                entries.forEach(e => { if (!e.isIntersecting) leave(e.target); });
+            }, { threshold: 0, rootMargin: '320px 0px 320px 0px' });
+
+            targets.forEach(t => { inObs.observe(t); outObs.observe(t); });
+        }
+
+        update();
+    }
+
+    /* ---------- Active nav link ---------- */
+    const links = $$('.navbar-nav .nav-link');
+    const secObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+        });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    $$('section[id]').forEach(s => secObs.observe(s));
+
+    // Close the mobile menu after clicking a link
+    const menu = $('#navMenu');
+    $$('.navbar-nav a').forEach(a => {
+        a.addEventListener('click', () => {
+            if (menu && menu.classList.contains('show') && window.bootstrap) {
+                window.bootstrap.Collapse.getOrCreateInstance(menu).hide();
+            }
+        });
+    });
+
+    /* ---------- Scroll-linked effects: progress, navbar, parallax, hero fade ---------- */
+    const bar = $('#scrollBar');
+    const nav = $('#mainNav');
+    const toTop = $('#toTop');
+    const heroWrap = $('#heroWrap');
+    const parallaxEls = $$('[data-speed]');
+    let ticking = false;
+
+    function update() {
+        const y = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+
+        if (bar) bar.style.width = max > 0 ? (y / max) * 100 + '%' : '0';
+        if (nav) nav.classList.toggle('scrolled', y > 40);
+        if (toTop) toTop.classList.toggle('show', y > 600);
+
+        if (!reduce) {
+            parallaxEls.forEach(el => {
+                el.style.translate = '0 ' + y * parseFloat(el.dataset.speed) + 'px';
+            });
+
+            if (heroWrap && y < window.innerHeight * 1.5) {
+                const p = Math.min(y / (window.innerHeight * 0.9), 1);
+                heroWrap.style.opacity = String(1 - p);
+                heroWrap.style.translate = '0 ' + y * 0.18 + 'px';
             }
         }
-        requestAnimationFrame(draw);
+        ticking = false;
     }
-    draw();
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    window.addEventListener('resize', update);
+
+    /* ---------- Cursor spotlight, card glow, tilt, magnetic buttons ---------- */
+    if (canHover && !reduce) {
+        // Soft cursor glow with smooth follow
+        const glow = $('#cursorGlow');
+        let tx = -600, ty = -600, cx = tx, cy = ty;
+        window.addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
+        (function loop() {
+            cx += (tx - cx) * 0.12;
+            cy += (ty - cy) * 0.12;
+            if (glow) glow.style.transform = `translate(${cx - 210}px, ${cy - 210}px)`;
+            requestAnimationFrame(loop);
+        })();
+
+        // Spotlight highlight that follows the cursor inside cards
+        $$('.spot').forEach(card => {
+            card.addEventListener('pointermove', e => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty('--mx', e.clientX - r.left + 'px');
+                card.style.setProperty('--my', e.clientY - r.top + 'px');
+            });
+        });
+
+        // 3D tilt
+        $$('.tilt').forEach(card => {
+            card.addEventListener('pointermove', e => {
+                const r = card.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                card.style.transform = `perspective(800px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-6px)`;
+            });
+            card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+        });
+
+        // Magnetic buttons
+        $$('.magnetic').forEach(btn => {
+            btn.addEventListener('pointermove', e => {
+                const r = btn.getBoundingClientRect();
+                const x = e.clientX - (r.left + r.width / 2);
+                const y = e.clientY - (r.top + r.height / 2);
+                btn.style.translate = `${x * 0.22}px ${y * 0.3}px`;
+            });
+            btn.addEventListener('pointerleave', () => { btn.style.translate = ''; });
+        });
+    }
+
+    /* ---------- Typing effect ---------- */
+    (function () {
+        const el = $('#typed');
+        if (!el) return;
+        const words = [
+            'responsive websites',
+            'modern user interfaces',
+            'clean front-end code',
+            'full-stack web apps'
+        ];
+        let wi = 0, ci = 0, deleting = false;
+
+        function type() {
+            const word = words[wi];
+            el.textContent = deleting ? word.slice(0, --ci) : word.slice(0, ++ci);
+
+            let delay = deleting ? 40 : 90;
+            if (!deleting && ci === word.length) { delay = 1600; deleting = true; }
+            else if (deleting && ci === 0) { deleting = false; wi = (wi + 1) % words.length; delay = 400; }
+            setTimeout(type, delay);
+        }
+        type();
+    })();
+
+    /* ---------- Contact form (opens the visitor's email app) ---------- */
+    const form = $('#contactForm');
+    if (form) {
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const name = $('#cName').value.trim();
+            const email = $('#cEmail').value.trim();
+            const msg = $('#cMsg').value.trim();
+
+            const subject = encodeURIComponent('Portfolio contact from ' + name);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`);
+            window.location.href = `mailto:arunsooryan1212@gmail.com?subject=${subject}&body=${body}`;
+        });
+    }
 })();
-
-// ---------- Soft cursor glow (desktop only) ----------
-const glow = document.getElementById('cursorGlow');
-if (glow && window.matchMedia('(hover: hover)').matches) {
-    window.addEventListener('mousemove', e => {
-        glow.style.left = e.clientX + 'px';
-        glow.style.top = e.clientY + 'px';
-    });
-}
-
-// ---------- Typing effect ----------
-(function () {
-    const el = document.getElementById('typed');
-    if (!el) return;
-    const words = [
-        'responsive websites',
-        'modern user interfaces',
-        'clean front-end code',
-        'full-stack web apps'
-    ];
-    let wi = 0, ci = 0, deleting = false;
-
-    function type() {
-        const word = words[wi];
-        el.textContent = deleting ? word.slice(0, --ci) : word.slice(0, ++ci);
-
-        let delay = deleting ? 40 : 90;
-        if (!deleting && ci === word.length) { delay = 1600; deleting = true; }
-        else if (deleting && ci === 0) { deleting = false; wi = (wi + 1) % words.length; delay = 400; }
-        setTimeout(type, delay);
-    }
-    type();
-})();
-
-// ---------- Auto-assign scroll animations ----------
-function setupAnim(selector, anim, stagger = 0) {
-    document.querySelectorAll(selector).forEach((el, i) => {
-        el.classList.add('reveal');
-        if (anim) el.classList.add(anim);
-        if (stagger && !el.dataset.delay) el.dataset.delay = i * stagger;
-    });
-}
-
-setupAnim('.section-tag', 'anim-blur');
-setupAnim('.section-title', 'anim-zoom');
-setupAnim('.hero .col-lg-5', 'anim-right');
-setupAnim('#about .row > .col-lg-6:first-child', 'anim-left');
-setupAnim('#about .row > .col-lg-6:last-child', 'anim-right');
-setupAnim('.stats .col-6', 'anim-zoom', 120);
-setupAnim('.timeline-item', 'anim-right', 250);
-setupAnim('.skillcard', 'anim-flip', 90);
-setupAnim('.bar-item', 'anim-left', 150);
-setupAnim('#projects .col-lg-6', 'anim-flip', 200);
-setupAnim('.contact-info', 'anim-left');
-setupAnim('.contact-form', 'anim-right');
-
-// ---------- Scroll reveal, counters, skill bars ----------
-function animateCounter(el) {
-    if (el.dataset.done) return;
-    el.dataset.done = '1';
-    const target = parseFloat(el.dataset.count);
-    const decimals = parseInt(el.dataset.decimals || 0, 10);
-    const duration = 1800;
-    const start = performance.now();
-
-    function tick(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = (target * eased).toFixed(decimals);
-        if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-}
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const el = entry.target;
-        const delay = parseInt(el.dataset.delay || 0, 10);
-
-        setTimeout(() => el.classList.add('visible'), delay);
-
-        el.querySelectorAll('.counter').forEach(animateCounter);
-        el.querySelectorAll('.bar-fill').forEach(bar => {
-            setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, delay);
-        });
-
-        // After the animation ends, drop the reveal classes so hover/tilt stays fast
-        setTimeout(() => el.classList.remove('reveal', 'visible'), delay + 1200);
-
-        observer.unobserve(el);
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// Draw-in effects: title underline, timeline line and dots
-const drawObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('in');
-        drawObserver.unobserve(entry.target);
-    });
-}, { threshold: 0.3 });
-
-document.querySelectorAll('.section-title, .timeline').forEach(el => drawObserver.observe(el));
-
-// ---------- Scroll progress, navbar, back-to-top ----------
-const scrollBar = document.getElementById('scrollBar');
-const navbar = document.getElementById('mainNav');
-const toTop = document.getElementById('toTop');
-
-window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    if (scrollBar && max > 0) scrollBar.style.width = (scrolled / max) * 100 + '%';
-    if (navbar) navbar.classList.toggle('scrolled', scrolled > 40);
-    if (toTop) toTop.classList.toggle('show', scrolled > 500);
-});
-
-// ---------- 3D tilt on cards (desktop only) ----------
-if (window.matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.tilt').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const r = card.getBoundingClientRect();
-            const x = (e.clientX - r.left) / r.width - 0.5;
-            const y = (e.clientY - r.top) / r.height - 0.5;
-            card.style.transform = `perspective(700px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-6px)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-        });
-    });
-}
-
-// ---------- Contact form (opens the visitor's email app) ----------
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', e => {
-        e.preventDefault();
-        const name = document.getElementById('cName').value.trim();
-        const email = document.getElementById('cEmail').value.trim();
-        const msg = document.getElementById('cMsg').value.trim();
-
-        const subject = encodeURIComponent('Portfolio contact from ' + name);
-        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`);
-        window.location.href = `mailto:arunsooryan1212@gmail.com?subject=${subject}&body=${body}`;
-    });
-}
