@@ -3,110 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Portfolio</title>
+    <meta name="description" content="Arun Kumar V - Computer Engineering graduate and web developer portfolio">
+    <title>Arun Kumar V | Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100" tabindex="0">
 
+    <!-- Preloader -->
+    <div id="preloader"><div class="loader-ring"></div><span>LOADING</span></div>
 
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <!-- Effects -->
+    <canvas id="bgCanvas"></canvas>
+    <div id="cursorGlow"></div>
+    <div id="scrollBar"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
         <div class="container">
-            <a class="navbarbrand" href="#home">Arun</a>
+            <a class="navbar-brand" href="#home">&lt;Arun<span>/&gt;</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                <i class="fa-solid fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto gap-lg-4">
+                <ul class="navbar-nav ms-auto gap-lg-3 align-items-lg-center">
                     <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
                     <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-cta" href="#contact">Hire Me</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-  
+    <!-- Hero -->
     <section id="home" class="hero">
-        <div class="commonbody">
-            <p class="herosmall">Hello, I'm</p>
-            <h1 class="herotitle">Arun Kumar V</h1>
-            <h2 class="herorole">Computer Engineering Graduate & Web Developer</h2>
-            <p class="herotext">I build clean, responsive websites using HTML, CSS, Bootstrap and Tailwind.</p>
-            <div class="herobuttons">
-                <a href="#projects" class="btnmain">View My Work</a>
-                <a href="#contact" class="btnoutlinemain">Contact Me</a>
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7 text-center text-lg-start">
+                    <div class="status-pill reveal"><span class="dot"></span> Open to opportunities</div>
+                    <p class="hero-small reveal" data-delay="100">Hello, I'm</p>
+                    <h1 class="hero-title reveal" data-delay="200">Arun Kumar V</h1>
+                    <h2 class="hero-role reveal" data-delay="300">
+                        I build <span id="typed" class="typed"></span><span class="cursor">|</span>
+                    </h2>
+                    <p class="hero-text reveal" data-delay="400">
+                        Computer Engineering graduate and web developer creating clean, responsive and modern websites with HTML, CSS, JavaScript and Bootstrap.
+                    </p>
+                    <div class="hero-buttons reveal" data-delay="500">
+                        <a href="#projects" class="btn-main">View My Work <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#contact" class="btn-outline-main">Contact Me</a>
+                    </div>
+                    <div class="hero-social reveal" data-delay="600">
+                        <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 reveal" data-delay="300">
+                    <div class="terminal float">
+                        <div class="terminal-bar">
+                            <span class="t-dot r"></span><span class="t-dot y"></span><span class="t-dot g"></span>
+                            <small>arun.js</small>
+                        </div>
+<pre class="terminal-body"><code><span class="c-k">const</span> <span class="c-v">arun</span> = {
+  <span class="c-p">role</span>: <span class="c-s">"Web Developer"</span>,
+  <span class="c-p">education</span>: <span class="c-s">"Diploma, Computer Eng."</span>,
+  <span class="c-p">batch</span>: <span class="c-n">2026</span>,
+  <span class="c-p">stack</span>: [<span class="c-s">"HTML"</span>, <span class="c-s">"CSS"</span>, <span class="c-s">"JS"</span>,
+          <span class="c-s">"React"</span>, <span class="c-s">"Node"</span>],
+  <span class="c-p">available</span>: <span class="c-k">true</span>
+};</code></pre>
+                    </div>
+                </div>
             </div>
         </div>
+        <a href="#about" class="scroll-down" aria-label="Scroll down"><i class="fa-solid fa-chevron-down"></i></a>
     </section>
 
+    <!-- About -->
     <section id="about" class="section">
-        <div class="commonbody">
-            <h2 class="sectiontitle">About Me</h2>
-            <p class="abouttext">
-                I am a fresh Computer Engineering diploma graduate (2026 pass-out) with a strong interest in front-end web development. I enjoy turning ideas into simple, responsive and good-looking websites, and I'm eager to learn, grow and take on my first professional opportunity.
-            </p>
+        <div class="container">
+            <p class="section-tag reveal">// 01</p>
+            <h2 class="section-title reveal">About <span>Me</span></h2>
 
-            <div class="singlecard">
-                <div class="card info-card">
-                    <div class="cardbody">
-                        <h5 class="card-title">Education</h5>
-                        <p class="card-text"><strong>Diploma in Computer Engineering</strong></p>
-                        <p class="card-text">Government Polytechnic College, Cherthala</p>
-                        <p class="card-text">Pass-out: 2026 </p>
-                        <p class="card-text">CGPA: 7.8</p>
+            <div class="row g-5 align-items-start">
+                <div class="col-lg-6 reveal">
+                    <p class="about-text">
+                        I am a fresh Computer Engineering diploma graduate (2026 pass-out) with a strong interest in front-end web development. I enjoy turning ideas into simple, responsive and good-looking websites, and I'm eager to learn, grow and take on my first professional opportunity.
+                    </p>
+
+                    <div class="row g-3 stats">
+                        <div class="col-6">
+                            <div class="glass stat">
+                                <h3><span class="counter" data-count="7.8" data-decimals="1">0</span></h3>
+                                <p>CGPA</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="glass stat">
+                                <h3><span class="counter" data-count="10">0</span>+</h3>
+                                <p>Technologies</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="glass stat">
+                                <h3><span class="counter" data-count="1">0</span>+</h3>
+                                <p>Projects Built</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="glass stat">
+                                <h3><span class="counter" data-count="100">0</span>%</h3>
+                                <p>Responsive Designs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 reveal" data-delay="200">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-dot"></span>
+                            <div class="glass tilt">
+                                <small class="timeline-date">2023 - 2026</small>
+                                <h5>Diploma in Computer Engineering</h5>
+                                <p>Government Polytechnic College, Cherthala</p>
+                                <p class="mb-0">CGPA: 7.8</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-dot pulse"></span>
+                            <div class="glass tilt">
+                                <small class="timeline-date">2026 - Now</small>
+                                <h5>Seeking First Role</h5>
+                                <p class="mb-0">Looking for a Front-end / Web Developer opportunity where I can learn and contribute.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Skills -->
     <section id="skills" class="section section-alt">
-        <div class="commonbody">
-            <h2 class="sectiontitle">Skills</h2>
+        <div class="container">
+            <p class="section-tag reveal">// 02</p>
+            <h2 class="section-title reveal">My <span>Skills</span></h2>
+
             <div class="skillsgrid">
-                <div class="card skillcard">
-                    <div class="cardbody">
-                        <i class="fa-brands fa-html5"></i>
-                        <h6 class="card-title">HTML</h6>
-                    </div>
+                <div class="glass skillcard tilt reveal"><i class="fa-brands fa-html5"></i><h6>HTML</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="80"><i class="fa-brands fa-css3-alt"></i><h6>CSS</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="160"><i class="fa-brands fa-js"></i><h6>JavaScript</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="240"><i class="fa-brands fa-bootstrap"></i><h6>Bootstrap</h6></div>
+                <div class="glass skillcard tilt reveal"><i class="fa-solid fa-wind"></i><h6>Tailwind</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="80"><i class="fa-brands fa-react"></i><h6>React</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="160"><i class="fa-brands fa-angular"></i><h6>Angular</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="240"><i class="fa-brands fa-node-js"></i><h6>Node.js</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="120"><i class="fa-solid fa-server"></i><h6>Express</h6></div>
+                <div class="glass skillcard tilt reveal" data-delay="200"><i class="fa-solid fa-database"></i><h6>MongoDB</h6></div>
+            </div>
+
+            <!-- Edit these percentages so they honestly reflect your level -->
+            <div class="glass bars reveal">
+                <div class="bar-item">
+                    <div class="bar-head"><span>HTML &amp; CSS</span><span>90%</span></div>
+                    <div class="bar"><div class="bar-fill" data-width="90"></div></div>
                 </div>
-                <div class="card skillcard">
-                    <div class="cardbody">
-                        <i class="fa-brands fa-css3-alt"></i>
-                        <h6 class="cardtitle">CSS</h6>
-                    </div>
+                <div class="bar-item">
+                    <div class="bar-head"><span>JavaScript</span><span>75%</span></div>
+                    <div class="bar"><div class="bar-fill" data-width="75"></div></div>
                 </div>
-                <div class="card skillcard">
-                    <div class="cardbody">
-                        <i class="fa-brands fa-bootstrap"></i>
-                        <h6 class="cardtitle">Bootstrap</h6>
-                    </div>
+                <div class="bar-item">
+                    <div class="bar-head"><span>Bootstrap / Tailwind</span><span>85%</span></div>
+                    <div class="bar"><div class="bar-fill" data-width="85"></div></div>
                 </div>
-                <div class="card skillcard">
-                    <div class="card-body">
-                        <i class="fa-solid fa-wind"></i>
-                        <h6 class="cardtitle">Tailwind</h6>
-                    </div>
+                <div class="bar-item">
+                    <div class="bar-head"><span>React / Angular</span><span>60%</span></div>
+                    <div class="bar"><div class="bar-fill" data-width="60"></div></div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-head"><span>Node / Express / MongoDB</span><span>60%</span></div>
+                    <div class="bar"><div class="bar-fill" data-width="60"></div></div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Projects -->
     <section id="projects" class="section">
-        <div class="commonbody">
-            <h2 class="sectiontitle">Projects</h2>
-            <div class="singlecard">
-                <div class="card projectcard">
-                    <div class="cardbody">
-                        <h5 class="cardtitle">Evara Events Website</h5>
-                        <p class="cardtext">A responsive event management website with a home banner, services, gallery and contact sections, built using HTML, CSS and Bootstrap.</p>
+        <div class="container">
+            <p class="section-tag reveal">// 03</p>
+            <h2 class="section-title reveal">My <span>Projects</span></h2>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-6 reveal">
+                    <div class="glass projectcard tilt">
+                        <div class="project-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <h5>Evara Events Website</h5>
+                        <p>A responsive event management website with a home banner, services, gallery and contact sections, built using HTML, CSS and Bootstrap.</p>
                         <div class="tags">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>Bootstrap</span>
+                            <span>HTML</span><span>CSS</span><span>Bootstrap</span>
+                        </div>
+                        <!-- Replace # with your live link / GitHub repo -->
+                        <div class="project-links">
+                            <a href="#" aria-label="Live demo"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live</a>
+                            <a href="#" aria-label="Source code"><i class="fa-brands fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copy this card to add more projects -->
+                <div class="col-lg-6 reveal" data-delay="150">
+                    <div class="glass projectcard tilt project-soon">
+                        <div class="project-icon"><i class="fa-solid fa-rocket"></i></div>
+                        <h5>Next Project Loading...</h5>
+                        <p>A full-stack app with React, Node, Express and MongoDB is on the way. Replace this card with your next project.</p>
+                        <div class="tags">
+                            <span>React</span><span>Node</span><span>MongoDB</span>
                         </div>
                     </div>
                 </div>
@@ -115,15 +238,34 @@
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="contact">
-        <div class="commonbody">
-            <h2 class="sectiontitle">Contact Me</h2>
-            <p class="contact-line"><i class="fa-solid fa-envelope"></i> arunsooryan1212@gmail.com</p>
+    <section id="contact" class="section section-alt">
+        <div class="container">
+            <p class="section-tag reveal">// 04</p>
+            <h2 class="section-title reveal">Contact <span>Me</span></h2>
 
-            <div class="socialicons">
-                <a class="smlinks" href="https://github.com/" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-                <a class="smlinks" href="https://www.linkedin.com/" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-                <a class="smlinks" href="https://www.instagram.com/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-5 reveal">
+                    <div class="glass contact-info">
+                        <h5>Let's work together</h5>
+                        <p>I'm open to internships and entry-level roles. Send me a message and I'll get back to you soon.</p>
+                        <p class="contact-line"><i class="fa-solid fa-envelope"></i> arunsooryan1212@gmail.com</p>
+                        <p class="contact-line"><i class="fa-solid fa-graduation-cap"></i> Cherthala, Kerala</p>
+                        <div class="socialicons">
+                            <a class="smlinks" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                            <a class="smlinks" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                            <a class="smlinks" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 reveal" data-delay="150">
+                    <form id="contactForm" class="glass contact-form">
+                        <input type="text" id="cName" placeholder="Your Name" required>
+                        <input type="email" id="cEmail" placeholder="Your Email" required>
+                        <textarea id="cMsg" rows="4" placeholder="Your Message" required></textarea>
+                        <button type="submit" class="btn-main w-100">Send Message <i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -133,6 +275,9 @@
         <p>&copy; 2026 Arun Kumar V. All Rights Reserved.</p>
     </footer>
 
+    <a href="#home" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></a>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="./script.js"></script>
 </body>
 </html>
