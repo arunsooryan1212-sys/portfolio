@@ -96,8 +96,32 @@ if (glow && window.matchMedia('(hover: hover)').matches) {
     type();
 })();
 
+// ---------- Auto-assign scroll animations ----------
+function setupAnim(selector, anim, stagger = 0) {
+    document.querySelectorAll(selector).forEach((el, i) => {
+        el.classList.add('reveal');
+        if (anim) el.classList.add(anim);
+        if (stagger && !el.dataset.delay) el.dataset.delay = i * stagger;
+    });
+}
+
+setupAnim('.section-tag', 'anim-blur');
+setupAnim('.section-title', 'anim-zoom');
+setupAnim('.hero .col-lg-5', 'anim-right');
+setupAnim('#about .row > .col-lg-6:first-child', 'anim-left');
+setupAnim('#about .row > .col-lg-6:last-child', 'anim-right');
+setupAnim('.stats .col-6', 'anim-zoom', 120);
+setupAnim('.timeline-item', 'anim-right', 250);
+setupAnim('.skillcard', 'anim-flip', 90);
+setupAnim('.bar-item', 'anim-left', 150);
+setupAnim('#projects .col-lg-6', 'anim-flip', 200);
+setupAnim('.contact-info', 'anim-left');
+setupAnim('.contact-form', 'anim-right');
+
 // ---------- Scroll reveal, counters, skill bars ----------
 function animateCounter(el) {
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
     const target = parseFloat(el.dataset.count);
     const decimals = parseInt(el.dataset.decimals || 0, 10);
     const duration = 1800;
@@ -122,14 +146,28 @@ const observer = new IntersectionObserver((entries) => {
 
         el.querySelectorAll('.counter').forEach(animateCounter);
         el.querySelectorAll('.bar-fill').forEach(bar => {
-            bar.style.width = bar.dataset.width + '%';
+            setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, delay);
         });
+
+        // After the animation ends, drop the reveal classes so hover/tilt stays fast
+        setTimeout(() => el.classList.remove('reveal', 'visible'), delay + 1200);
 
         observer.unobserve(el);
     });
-}, { threshold: 0.1 });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Draw-in effects: title underline, timeline line and dots
+const drawObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        drawObserver.unobserve(entry.target);
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.section-title, .timeline').forEach(el => drawObserver.observe(el));
 
 // ---------- Scroll progress, navbar, back-to-top ----------
 const scrollBar = document.getElementById('scrollBar');

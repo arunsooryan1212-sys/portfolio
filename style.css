@@ -385,16 +385,6 @@ body {
 
 .section-title span { color: var(--accent-2); }
 
-.section-title::after {
-    content: '';
-    display: block;
-    width: 56px;
-    height: 3px;
-    margin: 14px auto 0;
-    background: var(--accent);
-    border-radius: 3px;
-}
-
 /* ---------- Glass cards ---------- */
 .glass {
     background: var(--glass);
@@ -654,10 +644,45 @@ body {
 .reveal {
     opacity: 0;
     transform: translateY(40px);
-    transition: opacity 0.9s ease, transform 0.9s ease;
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
-.reveal.visible { opacity: 1; transform: none; }
+.reveal.anim-left  { transform: translateX(-70px); }
+.reveal.anim-right { transform: translateX(70px); }
+.reveal.anim-zoom  { transform: scale(0.85); }
+.reveal.anim-flip  { transform: perspective(600px) rotateX(-55deg) translateY(30px); transform-origin: top center; }
+.reveal.anim-blur  { transform: translateY(30px); filter: blur(10px); transition: opacity 0.9s ease, transform 0.9s ease, filter 0.9s ease; }
+
+.reveal.visible { opacity: 1; transform: none; filter: none; }
+
+/* Section title underline grows when the title appears */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    margin: 14px auto 0;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.9s ease 0.4s;
+}
+.section-title.in::after { width: 56px; }
+
+/* Timeline line draws downward */
+.timeline::before {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.6s ease 0.3s;
+}
+.timeline.in::before { transform: scaleY(1); }
+
+/* Timeline dots pop in */
+.timeline-dot {
+    transform: scale(0);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s;
+}
+.timeline.in .timeline-dot { transform: scale(1); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 991px) {
@@ -683,5 +708,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .reveal { opacity: 1; transform: none; }
+    .reveal { opacity: 1; transform: none; filter: none; }
+    .section-title::after { width: 56px; }
+    .timeline::before, .timeline-dot { transform: none; }
 }
